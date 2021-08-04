@@ -251,7 +251,7 @@ def pause_bot():
     return
 
 def call_webhook(data):
-    requests.post(NOTIFY_WEBHOOK, json={"coins": data})
+    requests.post(NOTIFY_WEBHOOK, json={"coins": data, "diff_min": TIME_DIFFERENCE})
 
 def convert_volume():
     '''Converts the volume given in QUANTITY from USDT to the each coin's volume'''
