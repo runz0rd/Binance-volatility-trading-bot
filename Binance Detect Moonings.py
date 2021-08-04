@@ -530,12 +530,12 @@ if __name__ == '__main__':
         client = Client(access_key, secret_key, tld='us')
     else:
         client = Client(access_key, secret_key)
-        
+
     # If the users has a bad / incorrect API key.
     # this will stop the script from starting, and display a helpful error.
     api_ready, msg = test_api_key(client, BinanceAPIException)
-    if api_ready is not True:
-       exit(f'{txcolors.SELL_LOSS}{msg}{txcolors.DEFAULT}')
+    if api_ready is not True and not TEST_MODE:
+        exit(f'{txcolors.SELL_LOSS}{msg}{txcolors.DEFAULT}')
 
     # Use CUSTOM_LIST symbols if CUSTOM_LIST is set to True
     if CUSTOM_LIST: tickers=[line.strip() for line in open(TICKERS_LIST)]
