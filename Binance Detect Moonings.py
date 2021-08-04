@@ -250,6 +250,8 @@ def pause_bot():
 
     return
 
+def call_webhook(data):
+    requests.post(NOTIFY_WEBHOOK, json={"coins": data})
 
 def convert_volume():
     '''Converts the volume given in QUANTITY from USDT to the each coin's volume'''
@@ -614,6 +616,3 @@ if __name__ == '__main__':
         except ConnectionError as ce:
             CONNECTION_ERROR_COUNT +=1
             print(f'{txcolors.WARNING}We got a timeout error from from binance. Going to re-loop. Current Count: {CONNECTION_ERROR_COUNT}\n{ce}{txcolors.DEFAULT}')
-
-def call_webhook(data):
-    requests.post(NOTIFY_WEBHOOK, json={"coins": data})
