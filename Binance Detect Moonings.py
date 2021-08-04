@@ -55,6 +55,8 @@ from helpers.handle_creds import (
     load_correct_creds, test_api_key
 )
 
+import requests
+
 
 # for colourful logging to the console
 class txcolors:
@@ -253,6 +255,10 @@ def convert_volume():
     '''Converts the volume given in QUANTITY from USDT to the each coin's volume'''
 
     volatile_coins, number_of_coins, last_price = wait_for_price()
+
+    if NOTIFY:
+        call_webhook(volatile_coins)
+
     lot_size = {}
     volume = {}
 
@@ -487,6 +493,10 @@ if __name__ == '__main__':
     DEBUG_SETTING = parsed_config['script_options'].get('DEBUG')
     AMERICAN_USER = parsed_config['script_options'].get('AMERICAN_USER')
 
+    # Load notify vars
+    NOTIFY = parsed_config['script_options']['NOTIFY']
+    NOTIFY_WEBHOOK = parsed_config['script_options']['NOTIFY_WEBHOOK']
+
     # Load trading vars
     PAIR_WITH = parsed_config['trading_options']['PAIR_WITH']
     QUANTITY = parsed_config['trading_options']['QUANTITY']
@@ -602,7 +612,8 @@ if __name__ == '__main__':
             READ_TIMEOUT_COUNT += 1
             print(f'{txcolors.WARNING}We got a timeout error from from binance. Going to re-loop. Current Count: {READ_TIMEOUT_COUNT}\n{rt}{txcolors.DEFAULT}')
         except ConnectionError as ce:
-            CONNECTION_ERROR_COUNT +=1 
+            CONNECTION_ERROR_COUNT +=1
             print(f'{txcolors.WARNING}We got a timeout error from from binance. Going to re-loop. Current Count: {CONNECTION_ERROR_COUNT}\n{ce}{txcolors.DEFAULT}')
 
-
+def call_webhook(data):
+    requests.post(NOTIFY_WEBHOOK, json={"coins": data})
