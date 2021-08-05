@@ -251,7 +251,10 @@ def pause_bot():
     return
 
 def call_webhook(data):
-    requests.post(NOTIFY_WEBHOOK, json={"coins": data, "diff_min": TIME_DIFFERENCE})
+    for coin, change in data.items():
+        data[coin]["change"] = change
+        data[coin]["link"] = f"https://www.tradingview.com/chart?symbol=BINANCE%3{coin}"
+    requests.post(NOTIFY_WEBHOOK, json={"coins": data, "diff_minute": TIME_DIFFERENCE})
 
 def convert_volume():
     '''Converts the volume given in QUANTITY from USDT to the each coin's volume'''
