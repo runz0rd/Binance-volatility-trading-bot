@@ -255,7 +255,7 @@ def call_webhook(data):
     for coin, change in data.items():
         notify_data[coin] = {}
         notify_data[coin]["change"] = change
-        notify_data[coin]["link"] = f"https://www.tradingview.com/chart?symbol=BINANCE%3{coin}"
+        notify_data[coin]["link"] = f"https://www.tradingview.com/chart?symbol=BINANCE:{coin}"
     requests.post(NOTIFY_WEBHOOK, json={"coins": notify_data, "diff_minute": TIME_DIFFERENCE})
 
 def convert_volume():
