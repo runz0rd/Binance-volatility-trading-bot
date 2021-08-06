@@ -260,7 +260,7 @@ def convert_volume():
 
     if NOTIFY_SIGNAL:
         data = {}
-        data["coins"] = []
+        data["coins"] = {}
         data["diff_minute"] = TIME_DIFFERENCE
         for coin, change in volatile_coins.items():
             data["coins"][coin] = {}
