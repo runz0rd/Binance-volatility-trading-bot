@@ -250,21 +250,23 @@ def pause_bot():
 
     return
 
-def call_webhook(data):
-    notify_data = {}
-    for coin, change in data.items():
-        notify_data[coin] = {}
-        notify_data[coin]["change"] = change
-        notify_data[coin]["link"] = f"https://www.tradingview.com/chart?symbol=BINANCE:{coin}"
-    requests.post(NOTIFY_WEBHOOK, json={"coins": notify_data, "diff_minute": TIME_DIFFERENCE})
+def call_webhook(url, data):
+    requests.post(url, json=data)
 
 def convert_volume():
     '''Converts the volume given in QUANTITY from USDT to the each coin's volume'''
 
     volatile_coins, number_of_coins, last_price = wait_for_price()
 
-    if NOTIFY:
-        call_webhook(volatile_coins)
+    if NOTIFY_SIGNAL:
+        data = {}
+        data["coins"] = []
+        data["diff_minute"] = TIME_DIFFERENCE
+        for coin, change in volatile_coins.items():
+            data["coins"][coin] = {}
+            data["coins"][coin]["change"] = change
+            data["coins"][coin]["link"] = f"https://www.tradingview.com/chart?symbol=BINANCE:{coin}"
+        call_webhook(NOTIFY_SIGNAL_WEBHOOK, data)
 
     lot_size = {}
     volume = {}
@@ -357,7 +359,6 @@ def buy():
                     if LOG_TRADES:
                         write_log(f"Buy : {volume[coin]} {coin} - {last_price[coin]['price']}")
 
-
         else:
             print(f'Signal detected, but there is already an active trade on {coin}')
 
@@ -407,6 +408,14 @@ def sell_coins():
                         quantity = coins_bought[coin]['volume']
 
                     )
+
+                if NOTIFY_TPSL:
+                    data = {}
+                    data["coin"] = coin
+                    data["change"] = {}
+                    data["change"]["percent"] = f"{PriceChange-(TRADING_FEE*2):.2f}%"
+                    data["change"]["fiat"] = f"{(QUANTITY*(PriceChange-(TRADING_FEE*2)))/100:.2f}$"
+                    call_webhook(NOTIFY_TPSL_WEBHOOK, data)
 
             # error handling here in case position cannot be placed
             except Exception as e:
@@ -501,8 +510,10 @@ if __name__ == '__main__':
     AMERICAN_USER = parsed_config['script_options'].get('AMERICAN_USER')
 
     # Load notify vars
-    NOTIFY = parsed_config['script_options']['NOTIFY']
-    NOTIFY_WEBHOOK = parsed_config['script_options']['NOTIFY_WEBHOOK']
+    NOTIFY_SIGNAL = parsed_config['script_options']['NOTIFY_SIGNAL']
+    NOTIFY_SIGNAL_WEBHOOK = parsed_config['script_options']['NOTIFY_SIGNAL_WEBHOOK']
+    NOTIFY_TPSL = parsed_config['script_options']['NOTIFY_TPSL']
+    NOTIFY_TPSL_WEBHOOK = parsed_config['script_options']['NOTIFY_TPSL_WEBHOOK']
 
     # Load trading vars
     PAIR_WITH = parsed_config['trading_options']['PAIR_WITH']
