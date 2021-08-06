@@ -251,6 +251,7 @@ def pause_bot():
     return
 
 def call_webhook(url, data):
+    print(f"calling WEBHOOK {url} with {data}")
     requests.post(url, json=data)
 
 def convert_volume():
