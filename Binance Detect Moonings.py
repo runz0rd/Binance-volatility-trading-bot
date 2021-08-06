@@ -252,7 +252,9 @@ def pause_bot():
 
 def call_webhook(url, data):
     print(f"calling WEBHOOK {url} with {data}")
-    requests.post(url, json=data)
+    r = requests.post(url, json=data)
+    if r.status_code != 200:
+        print(f"WEBHOOK error: {r.text}")
 
 def convert_volume():
     '''Converts the volume given in QUANTITY from USDT to the each coin's volume'''
