@@ -290,8 +290,9 @@ def convert_volume():
         except:
             pass
 
-        # calculate the volume in coin from QUANTITY in USDT (default)
-        volume[coin] = float(QUANTITY / float(last_price[coin]['price']))
+        if last_price.has_key(coin):
+            # calculate the volume in coin from QUANTITY in USDT (default)
+            volume[coin] = float(QUANTITY / float(last_price[coin]['price']))
 
         # define the volume with the correct step size
         if coin not in lot_size:
