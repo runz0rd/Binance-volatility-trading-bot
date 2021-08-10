@@ -303,7 +303,8 @@ def convert_volume():
             if lot_size[coin] == 0:
                 volume[coin] = int(volume[coin])
             else:
-                volume[coin] = float('{:.{}f}'.format(volume[coin], lot_size[coin]))
+                if coin in volume:
+                    volume[coin] = float('{:.{}f}'.format(volume[coin], lot_size[coin]))
 
     return volume, last_price
 
